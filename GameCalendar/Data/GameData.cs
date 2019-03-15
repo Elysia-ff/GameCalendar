@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,20 +11,11 @@ namespace GameCalendar.Data
 {
     public class GameData
     {
-        public class UIData
-        {
-            public Panel panel;
-            public GroupBox groupBox;
-            public List<Label> labels = new List<Label>();
-            public Button button;
-            public EventHandler clickEvent;
-        }
-
         [JsonProperty("name")]
         public string Name { get; set; }
 
         [JsonProperty("date")]
-        public string Date { get; set; }
+        public DateInfo Date { get; set; }
 
         [JsonProperty("developer")]
         public string Developer { get; set; }
@@ -36,30 +28,14 @@ namespace GameCalendar.Data
 
         public UIData uiData;
 
-        public TimeSpan? GetTimeSpan()
-        {
-            if (DateTime.TryParse(Date, out DateTime dateTime))
-                return DateTime.UtcNow - dateTime;
-
-            return null;
-        }
-
         public static int SortByDate(GameData v1, GameData v2)
         {
-            TimeSpan? v1Time = v1.GetTimeSpan();
-            TimeSpan? v2Time = v2.GetTimeSpan();
+            TimeSpan v1Time = v1.Date.GetTimeSpan();
+            TimeSpan v2Time = v2.Date.GetTimeSpan();
 
-            if (!v1Time.HasValue && !v2Time.HasValue)
-                return 0;
-
-            if (!v1Time.HasValue)
+            if (v1Time.Days < v2Time.Days)
                 return 1;
-            if (!v2Time.HasValue)
-                return -1;
-
-            if (v1Time.Value.Days < v2Time.Value.Days)
-                return 1;
-            if (v1Time.Value.Days > v2Time.Value.Days)
+            if (v1Time.Days > v2Time.Days)
                 return -1;
 
             return 0;

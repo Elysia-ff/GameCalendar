@@ -56,8 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DateInfo.cs" />
     <Compile Include="Data\GameData.cs" />
+    <Compile Include="Data\UIData.cs" />
     <Compile Include="Define.cs" />
+    <Compile Include="JSONConverter\DateConverter.cs" />
     <Compile Include="KeyManager.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

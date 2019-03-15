@@ -12,6 +12,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GameCalendar.JSONConverter;
 
 namespace GameCalendar
 {
@@ -49,6 +50,19 @@ namespace GameCalendar
 
         public bool IsLoading { get; private set; }
 
+        // Hide from Alt+Tab
+        // https://social.msdn.microsoft.com/Forums/windows/en-US/0eefb6f4-3619-4f7a-b144-48df80e2c603/how-to-hide-form-from-alttab-dialog?forum=winforms
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                // Turn on WS_EX_TOOLWINDOW style bit
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x80;
+                return cp;
+            }
+        }
+
         public MainForm()
         {
             InitializeComponent();
@@ -67,7 +81,7 @@ namespace GameCalendar
                 return;
 
             IsLoading = true;
-            for (int i = 0; i < dataList.Count; i++)
+            for (int i = 0; i < dataList.Count; ++i)
             {
                 RemoveControl(dataList[i]);
             }
@@ -76,13 +90,13 @@ namespace GameCalendar
             HttpWebResponse response = await Task.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null) as HttpWebResponse;
             StreamReader streamReader = new StreamReader(response.GetResponseStream());
             string content = await streamReader.ReadToEndAsync();
-            dataList = JsonConvert.DeserializeObject<List<GameData>>(content);
+            dataList = JsonConvert.DeserializeObject<List<GameData>>(content, new DateConverter());
             dataList.Sort(GameData.SortByDate);
             streamReader.Dispose();
 
             Invoke(new Action(() =>
             {
-                for (int i = 0; i < dataList.Count; i++)
+                for (int i = 0; i < dataList.Count; ++i)
                 {
                     MakeItem(i, dataList[i]);
                 }
@@ -125,23 +139,28 @@ namespace GameCalendar
 
         private void MakeItem(int idx, GameData data)
         {
+            TimeSpan timeSpan = data.Date.GetTimeSpan();
+            if (timeSpan.Days > Define.IgnoreDay)
+                return;
+
             Point newPoint = startPoint;
             newPoint.Y = startPoint.Y + (idx * itemInterval);
 
-            TimeSpan? timeSpan = data.GetTimeSpan();
-            Color color = timeSpan.HasValue ? Define.GetColor(timeSpan.Value.Days) : Define.UnknownColor;
-
             GroupBox groupBox = new GroupBox
             {
-                BackColor = color,
+                BackColor = data.Date.GetColor(),
                 Location = newPoint,
+#if DEBUG
+                Text = string.Format(nameFormat, idx + 1, data.Name),
+#else
                 Text = string.Format(nameFormat, data.Name),
+#endif
                 Size = itemSize,
                 TabStop = false
             };
 
-            data.uiData = new GameData.UIData();
-            data.uiData.labels.Add(MakeLabel(groupBox, datePoint, data.Date));
+            data.uiData = new UIData();
+            data.uiData.labels.Add(MakeLabel(groupBox, datePoint, data.Date.DateStr));
             data.uiData.labels.Add(MakeLabel(groupBox, platformPoint, data.Platform));
             data.uiData.labels.Add(MakeLabel(groupBox, koreanPatchPoint, data.KoreanPatch));
             MakeBtn(groupBox, morePoint, moreSize, data);
@@ -183,7 +202,7 @@ namespace GameCalendar
         {
             loadedData = data;
             nameDetail.Text = data.Name;
-            dateDetail.Text = data.Date;
+            dateDetail.Text = data.Date.DateStr;
             developerDetail.Text = data.Developer;
             platformDetail.Text = data.Platform;
             koreanPatchDetail.Text = data.KoreanPatch;
@@ -191,13 +210,13 @@ namespace GameCalendar
 
         private void RemoveControl(GameData data)
         {
-            GameData.UIData ui = data.uiData;
+            UIData ui = data.uiData;
             if (ui == null)
                 return;
 
             if (ui.panel.Controls.Contains(ui.groupBox))
             {
-                for (int i = 0; i < ui.labels.Count; i++)
+                for (int i = 0; i < ui.labels.Count; ++i)
                 {
                     if (ui.groupBox.Controls.Contains(ui.labels[i]))
                     {
@@ -220,7 +239,7 @@ namespace GameCalendar
             data.uiData = null;
         }
 
-        #region Event
+#region Event
         private void PinBtn_Click(object sender, EventArgs e)
         {
             IsPinned = !IsPinned;
@@ -319,6 +338,6 @@ namespace GameCalendar
                 Properties.Settings.Default.Save();
             }
         }
-        #endregion
+#endregion
     }
 }

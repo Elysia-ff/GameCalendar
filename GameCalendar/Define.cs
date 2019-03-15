@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GameCalendar.Data;
 
 namespace GameCalendar
 {
@@ -15,16 +16,7 @@ namespace GameCalendar
         public static readonly Color CloseColor = Color.Orange;
         public static readonly Color CameColor = Color.PaleGreen;
 
-        public static Color GetColor(int days)
-        {
-            if (days < -30)
-                return TooLongColor;
-
-            if (days < 0)
-                return CloseColor;
-
-            return CameColor;
-        }
+        public static readonly int IgnoreDay = 30;
 
         public static readonly string resourcesPath = "https://raw.githubusercontent.com/Elysia-ff/GameCalendar-resources/master/Calendar.json";
     }

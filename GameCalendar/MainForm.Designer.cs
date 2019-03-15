@@ -20,7 +20,11 @@ namespace GameCalendar
         private readonly Point startPoint = new Point(5, 3);
         private readonly Size itemSize = new Size(310, 36);
 
+#if DEBUG
+        private readonly string nameFormat = " {0}. {1} ";
+#else
         private readonly string nameFormat = " {0} ";
+#endif
         private readonly Point datePoint = new Point(17, 17);
         private readonly Point platformPoint = new Point(121, 17);
         private readonly Point koreanPatchPoint = new Point(262, 17);
@@ -47,7 +51,7 @@ namespace GameCalendar
             base.Dispose(disposing);
         }
 
-        #region Windows Form 디자이너에서 생성한 코드
+#region Windows Form 디자이너에서 생성한 코드
 
         /// <summary>
         /// 디자이너 지원에 필요한 메서드입니다. 
@@ -317,7 +321,7 @@ namespace GameCalendar
 
         }
 
-        #endregion
+#endregion
 
         private System.Windows.Forms.PictureBox pinBtn;
         private System.Windows.Forms.Label todayLabel;

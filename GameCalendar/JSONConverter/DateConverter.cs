@@ -10,8 +10,6 @@ namespace GameCalendar.JSONConverter
 {
     public class DateConverter : JsonConverter<DateInfo>
     {
-        private const char separator = ',';
-
         public override void WriteJson(JsonWriter writer, DateInfo value, JsonSerializer serializer)
         {
             writer.WriteValue(value.ToString());

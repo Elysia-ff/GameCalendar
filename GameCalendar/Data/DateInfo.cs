@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,17 +14,17 @@ namespace GameCalendar.Data
         public DateTime DateValue { get; private set; }
 
         private static readonly char separator = ' ';
-        private static readonly Dictionary<string, int> dateOrder = new Dictionary<string, int>
+        private static readonly Dictionary<string, int> monthOffset = new Dictionary<string, int>
         {
             ["1Q"] = 3,
             ["2Q"] = 6,
             ["3Q"] = 9,
             ["4Q"] = 12,
 
-            ["Spring"] = 3,
-            ["Summer"] = 6,
-            ["Fall"] = 9,
-            ["Winter"] = 12
+            ["Spring"] = 5,
+            ["Summer"] = 8,
+            ["Fall"] = 11,
+            ["Winter"] = 14
         };
 
         public DateInfo(string value)
@@ -43,15 +44,15 @@ namespace GameCalendar.Data
                 {
                     if (int.TryParse(str[0], out int year))
                     {
-                        if (str.Length < 2 || !dateOrder.ContainsKey(str[1]))
+                        if (str.Length < 2 || !monthOffset.ContainsKey(str[1]))
                         {
                             DateValue = new DateTime(year, 12, 31);
                         }
                         else
                         {
-                            int month = dateOrder[str[1]];
-                            int day = DateTime.DaysInMonth(year, month);
-                            DateValue = new DateTime(year, month, day);
+                            int month = monthOffset[str[1]];
+                            DateValue = new DateTime(year - 1, 12, 31);
+                            DateValue = DateValue.AddMonths(month);
                         }
                     }
                 }

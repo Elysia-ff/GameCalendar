@@ -26,8 +26,8 @@ namespace GameCalendar
         private readonly string nameFormat = " {0} ";
 #endif
         private readonly Point datePoint = new Point(17, 17);
-        private readonly Point platformPoint = new Point(121, 17);
-        private readonly Point koreanPatchPoint = new Point(262, 17);
+        private readonly Point platformPoint = new Point(100, 17);
+        private readonly Point koreanPatchPoint = new Point(210, 13);
         private readonly Point morePoint = new Point(290, 14);
         private readonly Size moreSize = new Size(16, 16);
 

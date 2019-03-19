@@ -162,7 +162,7 @@ namespace GameCalendar
             data.uiData = new UIData();
             data.uiData.labels.Add(MakeLabel(groupBox, datePoint, data.Date.DateStr));
             data.uiData.labels.Add(MakeLabel(groupBox, platformPoint, data.Platform));
-            data.uiData.labels.Add(MakeLabel(groupBox, koreanPatchPoint, data.KoreanPatch));
+            data.uiData.labels.Add(MakeAlignedLabel(groupBox, koreanPatchPoint, data.KoreanPatch));
             MakeBtn(groupBox, morePoint, moreSize, data);
 
             itemPanel.Controls.Add(groupBox);
@@ -177,6 +177,21 @@ namespace GameCalendar
                 AutoSize = true,
                 Location = point,
                 Text = text
+            };
+
+            parent.Controls.Add(label);
+            return label;
+        }
+
+        private Label MakeAlignedLabel(GroupBox parent, Point point, string text)
+        {
+            Label label = new Label
+            {
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleRight,
+                Location = point,
+                Text = text,
+                Size = new Size(70, 20)
             };
 
             parent.Controls.Add(label);

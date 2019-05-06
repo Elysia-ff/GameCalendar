@@ -96,9 +96,14 @@ namespace GameCalendar
 
             Invoke(new Action(() =>
             {
+                int idx = 0;
                 for (int i = 0; i < dataList.Count; ++i)
                 {
-                    MakeItem(i, dataList[i]);
+                    TimeSpan timeSpan = dataList[i].Date.GetTimeSpan();
+                    if (timeSpan.Days > Define.IgnoreDay)
+                        continue;
+
+                    MakeItem(idx++, dataList[i]);
                 }
 
                 // How to disable scroll bar
@@ -139,10 +144,6 @@ namespace GameCalendar
 
         private void MakeItem(int idx, GameData data)
         {
-            TimeSpan timeSpan = data.Date.GetTimeSpan();
-            if (timeSpan.Days > Define.IgnoreDay)
-                return;
-
             Point newPoint = startPoint;
             newPoint.Y = startPoint.Y + (idx * itemInterval);
 
